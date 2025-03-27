@@ -13,8 +13,8 @@ För att köra applikationen lokalt behöver du **Node.js** installerat.
 ### 1. Klona repot
 
 ```bash
-git clone https://github.com/ditt-användarnamn/http-basics.git
-cd http-basics
+git clone https://github.com/ettelman/HTTP-Basics.git
+cd HTTP-Basics
 ```
 
 ### 2. Installera beroenden
