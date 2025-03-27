@@ -4,6 +4,8 @@
 
 Tre flaggor finns gömda i applikationen. Varje flagga skickas in via ett formulär i frontend.
 
+![Bild på ctfen](captura-2025-03-27-1743084168.png)
+
 ---
 
 ## 🛠 Installation
