@@ -1,0 +1,250 @@
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HTTP</title>
+    <style>
+      /* Grundläggande reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        line-height: 1.6;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+
+      /* Header och navigation */
+      header {
+        background-color: #35424a;
+        color: #ffffff;
+        padding: 20px 0;
+        border-bottom: 3px solid #e8491d;
+      }
+
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+
+      header .logo {
+        float: left;
+        font-size: 24px;
+        font-weight: bold;
+        letter-spacing: 2px;
+      }
+
+      header nav {
+        float: right;
+        margin-top: 10px;
+      }
+
+      nav ul {
+        list-style: none;
+      }
+
+      nav ul li {
+        display: inline;
+        margin-left: 20px;
+      }
+
+      nav ul li a {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 20px;
+        transition: color 0.3s ease;
+      }
+
+      nav ul li a:hover {
+        color: #e8491d;
+      }
+      /* Responsivitet */
+      @media (max-width: 768px) {
+        header .logo,
+        header nav {
+          float: none;
+          text-align: center;
+        }
+
+        header nav ul li {
+          display: block;
+          margin: 10px 0;
+        }
+
+        .container {
+          width: 90%;
+        }
+      }
+
+      @property --rotate {
+        syntax: "<angle>";
+        initial-value: 132deg;
+        inherits: false;
+      }
+
+      :root {
+        --card-height: auto;
+        --card-width: 50%;
+      }
+
+      body {
+        min-height: 100vh;
+        background: #212534;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        box-sizing: border-box;
+      }
+
+      .card {
+        background: #191c29;
+        width: var(--card-width);
+        height: var(--card-height);
+        padding: 3px;
+        position: relative;
+        border-radius: 6px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        font-size: 1.5em;
+        color: lightskyblue;
+        font-family: cursive;
+      }
+
+      .card::before {
+        content: "";
+        width: 104%;
+        height: 102%;
+        border-radius: 8px;
+        background-image: linear-gradient(
+          var(--rotate),
+          #5ddcff,
+          #3c67e3 43%,
+          #4e00c2
+        );
+        position: absolute;
+        z-index: -1;
+        top: -1%;
+        left: -2%;
+        animation: spin 2.5s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          --rotate: 0deg;
+        }
+        100% {
+          --rotate: 360deg;
+        }
+      }
+      hr {
+        color: lightskyblue;
+        margin: 2rem;
+      }
+      input [type="text"] {
+        border: 2px solid lightskybue;
+      }
+      p {
+        margin: 2rem;
+      }
+      .hofList,
+      ul {
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>HTTP challenge</h1>
+
+      <nav>
+        <ul>
+          <li><a href="/">Hem</a></li>
+          <li><a href="/tips">Tips</a></li>
+        </ul>
+      </nav>
+      <hr />
+      <h2>Skicka in dina flaggor</h2>
+      <hr />
+      <form id="flagForm">
+        <div>
+          <label for="name">Namn:</label>
+          <input type="text" id="name" required />
+        </div>
+        <div>
+          <label for="flag1">Flagga 1:</label>
+          <input type="text" id="flag1" required />
+        </div>
+        <div>
+          <label for="flag2">Flagga 2:</label>
+          <input type="text" id="flag2" required />
+        </div>
+        <div>
+          <label for="flag3">Flagga 3:</label>
+          <input type="text" id="flag3" required />
+        </div>
+        <button type="submit">Skicka in</button>
+      </form>
+
+      <p id="result"></p>
+      <hr />
+      <h2>Hall of Fame</h2>
+      <button id="refresh">Uppdatera Hall of Fame</button>
+      <hr />
+      <ul id="hofList">
+        <li>Ingen har löst utmaningen ännu</li>
+      </ul>
+    </div>
+    <script>
+      const form = document.getElementById("flagForm");
+      const resultParagraph = document.getElementById("result");
+      const refreshButton = document.getElementById("refresh");
+      const hofList = document.getElementById("hofList");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const flag1 = document.getElementById("flag1").value;
+        const flag2 = document.getElementById("flag2").value;
+        const flag3 = document.getElementById("flag3").value;
+
+        const response = await fetch("/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, flag1, flag2, flag3 }),
+        });
+
+        const data = await response.json();
+        resultParagraph.textContent = data.message;
+
+        if (data.success) {
+          await loadHallOfFame();
+        }
+      });
+
+      async function loadHallOfFame() {
+        const res = await fetch("/hall-of-fame");
+        const names = await res.json();
+
+        hofList.innerHTML = "";
+        names.slice(0, 5).forEach((name, index) => {
+          const li = document.createElement("li");
+          li.textContent = `${index + 1}. ${name}`;
+          hofList.appendChild(li);
+        });
+      }
+
+      refreshButton.addEventListener("click", loadHallOfFame);
+
+      loadHallOfFame();
+    </script>
+  </body>
+</html>
