@@ -9,11 +9,15 @@ Tre flaggor finns gömda i applikationen. Varje flagga skickas in via ett formul
 ---
 ## Docker
 
+```bash
 git clone https://github.com/ettelman/HTTP-Basics.git
 cd HTTP-Basics
+```
 
+```bash
 docker build -t http-basics .
 docker run -p 3000:3000 http-basics
+```
 
 ## 🛠 Installation
 
