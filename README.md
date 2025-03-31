@@ -7,6 +7,13 @@ Tre flaggor finns gömda i applikationen. Varje flagga skickas in via ett formul
 ![Bild på ctfen](captura-2025-03-27-1743084168.png)
 
 ---
+## Docker
+
+git clone https://github.com/ettelman/HTTP-Basics.git
+cd HTTP-Basics
+
+docker build -t http-basics .
+docker run -p 3000:3000 http-basics
 
 ## 🛠 Installation
 
